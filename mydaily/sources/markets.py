@@ -6,6 +6,7 @@ sai mesmo assim com o último valor conhecido (marcado como defasado).
 from __future__ import annotations
 
 import logging
+import os
 
 import requests
 
@@ -61,7 +62,10 @@ def _delta(pct: float | None) -> tuple[str, str]:
 def _awesomeapi(entry: dict) -> tuple[float, float | None]:
     code = entry["code"]                    # ex.: USD-BRL
     url = f"https://economia.awesomeapi.com.br/json/last/{code}"
-    resp = requests.get(url, headers={"User-Agent": _UA}, timeout=15)
+    # Token opcional (aumenta o limite de requisições). Fica no .env, nunca no config.
+    token = os.getenv("AWESOMEAPI_TOKEN", "").strip()
+    params = {"token": token} if token else None
+    resp = requests.get(url, headers={"User-Agent": _UA}, params=params, timeout=15)
     resp.raise_for_status()
     data = resp.json()
     chave = code.replace("-", "")
