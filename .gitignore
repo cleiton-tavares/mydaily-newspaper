@@ -2,6 +2,10 @@
 .env
 config.yaml
 
+# Google Calendar (OAuth)
+credentials.json
+token.json
+
 # Saídas geradas
 output/
 *.pdf

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 from datetime import date, datetime
 
@@ -86,6 +87,37 @@ def _coletar_conteudo(cfg: Config, hoje: date, demo: bool):
     return editorial, weather, numeros
 
 
+def _resolver_agenda(cfg: Config, hoje: date, demo: bool) -> list[dict]:
+    """Agenda do Google Calendar (se ativado) com fallback para a lista do config."""
+    gc = cfg.raw.get("google_calendar", {}) or {}
+    if demo or not gc.get("ativar"):
+        return cfg.agenda
+    try:
+        from .sources import calendar_google
+
+        ics_url = (gc.get("ics_url") or os.getenv("GOOGLE_ICS_URL", "")).strip()
+        agenda = calendar_google.obter_agenda(
+            metodo=gc.get("metodo", "ics"),
+            tz=cfg.tz,
+            hoje=hoje,
+            ics_url=ics_url,
+            credentials_file=gc.get("credentials_file", "credentials.json"),
+            token_file=gc.get("token_file", "token.json"),
+            calendar_id=gc.get("calendar_id", "primary"),
+            max_eventos=int(gc.get("max_eventos", 6)),
+        )
+        log.info("Agenda do Google Calendar: %d compromisso(s).", len(agenda))
+        print(f"  Agenda: Google Calendar ({len(agenda)} compromisso(s))")
+        return agenda
+    except ImportError:
+        print("  Agenda: dependências do Google ausentes — usando agenda do config. "
+              "(pip install -r requirements-google.txt)")
+    except Exception as exc:  # noqa: BLE001
+        log.warning("Falha ao ler o Google Calendar: %s", exc)
+        print(f"  Agenda: falha no Google Calendar ({exc}). Usando a agenda do config.")
+    return cfg.agenda
+
+
 def run(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     logging.basicConfig(
@@ -99,8 +131,9 @@ def run(argv: list[str] | None = None) -> int:
     print(f"O Matinal — edição de {hoje.isoformat()}")
 
     editorial, weather, numeros = _coletar_conteudo(cfg, hoje, args.demo)
+    agenda = _resolver_agenda(cfg, hoje, args.demo)
 
-    contexto = montar_contexto(cfg, editorial, weather, numeros, hoje)
+    contexto = montar_contexto(cfg, editorial, weather, numeros, hoje, agenda=agenda)
     html = renderizar_html(contexto)
 
     out_dir = cfg.output_dir

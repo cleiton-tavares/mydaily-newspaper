@@ -148,6 +148,69 @@ Register-ScheduledTask -TaskName "O Matinal" -Action $acao -Trigger $gatilho -De
 
 ---
 
+## Puxar a agenda do Google Calendar
+
+Por padrão a agenda vem da lista `agenda:` no `config.yaml`. Para puxar os
+compromissos reais do dia do Google Calendar, instale as dependências extras e
+escolha um dos dois métodos:
+
+```bash
+pip install -r requirements-google.txt
+```
+
+Nos dois casos, no `config.yaml` ative:
+
+```yaml
+google_calendar:
+  ativar: true
+  metodo: "ics"   # ou "api"
+```
+
+Se a consulta falhar (sem internet, credencial errada), o app volta
+automaticamente para a lista `agenda:` do config — o jornal nunca sai sem agenda.
+
+### Método 1 — ICS (mais simples, recomendado)
+
+Usa o "endereço secreto" do seu calendário. Sem Google Cloud, sem OAuth.
+
+1. Abra o [Google Calendar](https://calendar.google.com) no computador.
+2. Passe o mouse sobre o calendário desejado (coluna esquerda) → ⋮ →
+   **Configurações e compartilhamento**.
+3. Role até **Integrar agenda** → copie o **Endereço secreto no formato iCal**.
+4. Cole no `.env` (é um segredo — quem tiver a URL vê sua agenda):
+
+   ```dotenv
+   GOOGLE_ICS_URL=https://calendar.google.com/calendar/ical/.../basic.ics
+   ```
+
+Pronto. Eventos recorrentes e de dia inteiro são tratados automaticamente.
+
+> Dica: se preferir, dá para colar a URL em `google_calendar.ics_url` no
+> `config.yaml`, mas o `.env` é o lugar mais seguro para segredos.
+
+### Método 2 — API oficial (OAuth)
+
+Mais robusto (não depende de URL secreta), mas exige um projeto no Google Cloud.
+
+1. No [Google Cloud Console](https://console.cloud.google.com/): crie um projeto
+   e **ative a Google Calendar API**.
+2. Em **Credenciais** → **Criar credenciais** → **ID do cliente OAuth** → tipo
+   **App para computador**. Baixe o JSON e salve como `credentials.json` na raiz
+   do projeto.
+3. Em **Tela de consentimento OAuth**, adicione seu e-mail como usuário de teste.
+4. No `config.yaml`, use `metodo: "api"`.
+5. Na **primeira execução**, o app abre o navegador para você autorizar; depois
+   disso ele grava um `token.json` e passa a renovar o acesso sozinho.
+
+   ```bash
+   python -m mydaily --no-print   # autoriza na 1ª vez
+   ```
+
+> `credentials.json` e `token.json` já estão no `.gitignore`. Rode a primeira
+> autorização manualmente antes de agendar a tarefa automática das manhãs.
+
+---
+
 ## Estrutura do projeto
 
 ```
@@ -161,9 +224,10 @@ mydaily/
 ├── printing.py       # impressão (Windows / CUPS)
 ├── sample.py         # conteúdo de exemplo (modo --demo)
 ├── sources/
-│   ├── rss.py        # coleta de notícias
-│   ├── weather.py    # clima (Open-Meteo)
-│   └── markets.py    # indicadores (AwesomeAPI, BCB, Yahoo)
+│   ├── rss.py             # coleta de notícias
+│   ├── weather.py         # clima (Open-Meteo)
+│   ├── markets.py         # indicadores (AwesomeAPI, BCB, Yahoo)
+│   └── calendar_google.py # agenda do Google Calendar (ICS ou API)
 └── templates/
     ├── newspaper.html.j2   # documento (as duas folhas)
     ├── page1.html.j2       # capa

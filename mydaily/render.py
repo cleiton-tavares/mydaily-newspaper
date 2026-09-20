@@ -46,6 +46,7 @@ def montar_contexto(
     weather: Weather,
     numeros: list[MarketNumber],
     hoje: date,
+    agenda: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     briefing = dict(editorial.get("briefing", {}))
     briefing["clima"] = weather.resumo_curto if weather and weather.resumo_curto else "—"
@@ -55,7 +56,7 @@ def montar_contexto(
         "ed": editorial,
         "weather": weather,
         "numeros": numeros,
-        "agenda": cfg.agenda,
+        "agenda": cfg.agenda if agenda is None else agenda,
         "lembretes": cfg.lembretes,
         "clima_cidade": cfg.clima.get("cidade", ""),
     }

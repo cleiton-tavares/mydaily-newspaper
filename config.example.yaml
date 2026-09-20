@@ -95,7 +95,26 @@ numeros:
     sem_delta: true          # mostra "—" no delta
     fallback: "4,1%"
 
-# Agenda do dia (barra lateral). Edite conforme sua rotina.
+# --- Agenda: Google Calendar (opcional) -----------------------------------
+# Se `ativar: true`, a agenda do dia vem do Google Calendar em vez da lista
+# estática abaixo. Se a consulta falhar, o app cai na lista `agenda:`.
+google_calendar:
+  ativar: false
+  metodo: "ics"            # "ics" (simples, recomendado) ou "api" (OAuth)
+
+  # -- Método ICS: URL secreta iCal do Google Calendar --
+  # No Google Calendar: Configurações > (seu calendário) > "Endereço secreto no
+  # formato iCal". Cole aqui OU, de preferência, no .env como GOOGLE_ICS_URL.
+  ics_url: ""
+
+  # -- Método API (OAuth): arquivos de credencial (veja o README) --
+  credentials_file: "credentials.json"
+  token_file: "token.json"
+  calendar_id: "primary"
+
+  max_eventos: 6
+
+# Agenda do dia estática (usada quando o Google Calendar está desativado ou falha).
 agenda:
   - hora: "07:30"
     titulo: "Corrida na orla"

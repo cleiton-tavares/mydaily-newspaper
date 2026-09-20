@@ -1,0 +1,11 @@
+# Dependências OPCIONAIS para puxar a agenda do Google Calendar.
+# Instale apenas se for usar a integração:  pip install -r requirements-google.txt
+
+# Método ICS (URL secreta iCal) — simples, sem OAuth:
+icalendar>=6.0.0
+recurring_ical_events>=3.3.0
+
+# Método API (OAuth) — Google Calendar API oficial:
+google-api-python-client>=2.100.0
+google-auth-oauthlib>=1.2.0
+google-auth>=2.30.0
