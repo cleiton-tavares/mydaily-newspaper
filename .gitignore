@@ -1,0 +1,22 @@
+# Segredos e configuração local
+.env
+config.yaml
+
+# Saídas geradas
+output/
+*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+
+# SO / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

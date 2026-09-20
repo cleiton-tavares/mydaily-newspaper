@@ -1,0 +1,92 @@
+{% import "icons.html.j2" as ic %}
+
+{# ======================= MACROS DE APOIO (página 2) ======================= #}
+{% macro quote_block(q) %}
+{% if q.text %}
+<div class="box-border w-full h-fit shrink-0 flex flex-col gap-[6px] p-[10px_0px_10px_14px] justify-start items-start [border-width:0px_0px_0px_3px] [border-style:solid] [border-color:#1F1F1F]">
+  <div class="text-[17px]/[22px] box-border w-full text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-semibold italic text-left">{{ q.text }}</div>
+  {% if q.author %}<div class="text-[10px]/[normal] box-border w-full text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1px] text-left">{{ q.author }}</div>{% endif %}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro colunas(paragraphs, quote, n_cols, gap, quote_col) %}
+<div class="box-border w-full h-fit shrink-0 flex flex-row gap-[{{ gap }}px] justify-start items-start">
+  {% for grupo in paragraphs | slice(n_cols) %}
+  <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[10px] justify-start items-start">
+    {% for p in grupo %}{% if p %}
+    <div class="text-[14px]/[20px] box-border w-full text-[#141414] font-[Newsreader,system-ui,sans-serif] font-normal text-left">{{ p }}</div>
+    {% endif %}{% endfor %}
+    {% if loop.index0 == quote_col %}{{ quote_block(quote) }}{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro reportagem(r, h_size, h_lh, lf_size, lf_lh, n_cols, gap, quote_col, with_rule) %}
+<div class="box-border {% if n_cols == 3 %}w-full{% else %}[flex:1_1_0]{% endif %} h-fit shrink-0 flex flex-col gap-[{% if with_rule %}14{% else %}12{% endif %}px] justify-start items-start">
+  <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[12px] justify-between items-center">
+    <div class="text-[10px]/[normal] box-border text-[#141414] font-[Inter,system-ui,sans-serif] font-bold tracking-[1.5px] text-left">{{ r.kicker }}</div>
+    {% if r.source %}<div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1px] text-right">{{ r.source }}</div>{% endif %}
+  </div>
+  <div class="text-[{{ h_size }}px]/[{{ h_lh }}px] box-border w-full text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-extrabold {% if n_cols == 3 %}tracking-[-0.5px]{% endif %} text-left">{{ r.headline }}</div>
+  {% if r.standfirst %}<div class="text-[{{ lf_size }}px]/[{{ lf_lh }}px] box-border w-full text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal italic text-left">{{ r.standfirst }}</div>{% endif %}
+  {% if with_rule %}<div class="box-border w-full h-[1px] shrink-0 bg-[#D6D6D6]"></div>{% endif %}
+  {{ colunas(r.paragraphs, r.quote, n_cols, gap, quote_col) }}
+</div>
+{% endmacro %}
+
+<div class="sheet box-border flex flex-col gap-0 p-[56px_64px_48px_64px] justify-start items-start">
+  <!-- ============================ CABEÇALHO ============================ -->
+  <div class="box-border w-full h-fit shrink-0 flex flex-col gap-0 justify-start items-start">
+    <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[0px_0px_8px_0px] justify-between items-center">
+      <div class="text-[22px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-black text-left [white-space:nowrap]">{{ meta.titulo }}</div>
+      <div class="text-[11px]/[normal] box-border text-[#4A4A4A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-left [white-space:nowrap]">{{ meta.data_extenso }}</div>
+      <div class="text-[11px]/[normal] box-border text-[#4A4A4A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-left [white-space:nowrap]">REPORTAGENS · PÁGINA 2</div>
+    </div>
+    <div class="box-border w-full h-[4px] shrink-0 bg-[#1F1F1F]"></div>
+    <div class="box-border w-full h-[3px] shrink-0"></div>
+    <div class="box-border w-full h-[1px] shrink-0 bg-[#1F1F1F]"></div>
+  </div>
+
+  <!-- ============================== CORPO ============================== -->
+  <div class="box-border w-full [flex:1_1_0] flex flex-col gap-[34px] p-[22px_0px_0px_0px] justify-start items-start">
+
+    <!-- Reportagem principal (3 colunas) -->
+    {{ reportagem(ed.page2.featured, 36, 40, 17, 23, 3, 24, 1, true) }}
+
+    <div class="box-border w-full h-[2px] shrink-0 bg-[#1F1F1F]"></div>
+
+    <!-- Duas reportagens lado a lado -->
+    <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[28px] justify-start items-start">
+      {% for r in ed.page2.secondary %}
+        {{ reportagem(r, 27, 30, 15, 20, 2, 22, 1, false) }}
+      {% endfor %}
+    </div>
+
+    <div class="box-border w-full h-[2px] shrink-0 bg-[#1F1F1F]"></div>
+
+    <!-- Em poucas linhas -->
+    <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[12px] justify-start items-start">
+      <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 justify-between items-end">
+        <div class="text-[22px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-extrabold text-left [white-space:nowrap]">Em poucas linhas</div>
+        <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-left [white-space:nowrap]">OUTRAS NOTÍCIAS QUE VALEM SUA ATENÇÃO</div>
+      </div>
+      <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 justify-start items-stretch">
+        {% for nota in ed.page2.brief_notes %}
+        <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[6px] {% if loop.first %}p-[0px_18px_0px_0px]{% else %}p-[0px_18px] [border-width:0px_0px_0px_1px] [border-style:solid] [border-color:#D6D6D6] [margin:0px_0px_0px_-0.5px]{% endif %} justify-start items-start">
+          <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-bold tracking-[1.5px] text-left [white-space:nowrap]">{{ nota.label }}</div>
+          <div class="text-[16px]/[19px] box-border w-full text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-bold text-left">{{ nota.title }}</div>
+          <div class="text-[13px]/[18px] box-border w-full text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal text-left">{{ nota.body }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================= FOOTER ============================= -->
+  <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[10px_0px_0px_0px] justify-between items-center [border-width:1px_0px_0px_0px] [border-style:solid] [border-color:#1F1F1F]">
+    <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1px] text-left [white-space:nowrap]">{{ meta.titulo | upper }} · GERADO AUTOMATICAMENTE ÀS {{ meta.hora_impressao }} · FONTES INDICADAS EM CADA REPORTAGEM</div>
+    <div class="text-[12px]/[normal] box-border text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal italic text-left [white-space:nowrap]">Página 2 de 2</div>
+  </div>
+</div>

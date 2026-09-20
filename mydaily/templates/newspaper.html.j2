@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      tailwind = { config: { corePlugins: { preflight: false } } };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter%3Awght%40100..900&family=Newsreader%3Aital%2Cwght%400%2C200..800%3B1%2C200..800&family=Playfair+Display%3Aital%2Cwght%400%2C400..900%3B1%2C400..900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *, ::before, ::after { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; background: #FFFFFF; }
+
+      /* Cada folha tem o tamanho exato do design (A4 @150dpi). O PDF é gerado
+         com escala 0.6406 para caber em uma página A4 (210x297mm @96dpi). */
+      .sheet {
+        width: 1240px;
+        height: 1754px;
+        overflow: hidden;
+        background: #FFFFFF;
+        position: relative;
+      }
+      .sheet + .sheet { page-break-before: always; break-before: page; }
+
+      @page { size: A4; margin: 0; }
+
+      /* Só na tela (pré-visualização): fundo cinza e sombra para conferência. */
+      @media screen {
+        body {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 28px;
+          background: #E7E7E7;
+          padding: 28px 0;
+        }
+        .sheet { box-shadow: 0 6px 30px rgba(0, 0, 0, 0.18); }
+      }
+    </style>
+  </head>
+  <body>
+    {% include "page1.html.j2" %}
+    {% include "page2.html.j2" %}
+  </body>
+</html>

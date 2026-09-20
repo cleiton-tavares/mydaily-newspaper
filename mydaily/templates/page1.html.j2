@@ -1,0 +1,229 @@
+{% import "icons.html.j2" as ic %}
+
+{# ======================= MACROS DE APOIO (página 1) ======================= #}
+{% macro section_head(label, kicker) %}
+<div class="box-border w-full h-fit shrink-0 flex flex-col gap-[6px] justify-start items-start">
+  <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 justify-between items-end">
+    <div class="text-[22px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-extrabold text-left [white-space:nowrap]">{{ label }}</div>
+    <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-left [white-space:nowrap]">{{ kicker }}</div>
+  </div>
+  <div class="box-border w-full h-[2px] shrink-0 bg-[#1F1F1F]"></div>
+</div>
+{% endmacro %}
+
+{% macro side_head(label, kicker="") %}
+<div class="box-border w-full h-fit shrink-0 flex flex-col gap-[6px] justify-start items-start">
+  <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[8px] justify-between items-end">
+    <div class="text-[20px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-extrabold text-left [white-space:nowrap]">{{ label }}</div>
+    {% if kicker %}<div class="text-[10px]/[normal] box-border shrink-0 text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-right [white-space:nowrap]">{{ kicker }}</div>{% endif %}
+  </div>
+  <div class="box-border w-full h-[2px] shrink-0 bg-[#1F1F1F]"></div>
+</div>
+{% endmacro %}
+
+{% macro story_block(s, h_size, h_lh, b_size, b_lh) %}
+{% if s.headline %}
+<div class="box-border w-full h-fit shrink-0 flex flex-col gap-[6px] justify-start items-start">
+  <div class="text-[{{ h_size }}px]/[{{ h_lh }}px] box-border w-full text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-bold text-left">{{ s.headline }}</div>
+  {% if s.body %}<div class="text-[{{ b_size }}px]/[{{ b_lh }}px] box-border w-full text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal text-left">{{ s.body }}</div>{% endif %}
+  {% if s.meta %}<div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1px] text-left [white-space:nowrap]">{{ s.meta }}</div>{% endif %}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro two_col_stories(stories) %}
+<div class="box-border w-full h-fit shrink-0 flex flex-row gap-[22px] justify-start items-start">
+  <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[18px] justify-start items-start">
+    {{ story_block(stories[0], 19, 22, 14.5, 21) }}
+    {{ story_block(stories[1], 19, 22, 14.5, 21) }}
+  </div>
+  <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[18px] justify-start items-start">
+    {{ story_block(stories[2], 19, 22, 14.5, 21) }}
+    {{ story_block(stories[3], 19, 22, 14.5, 21) }}
+  </div>
+</div>
+{% endmacro %}
+
+{% set mundo_dest = 1 + (ed.page1.mundo.secondary | selectattr('headline') | list | length) %}
+{% set brasil_dest = ed.page1.brasil.stories | selectattr('headline') | list | length %}
+{% set ia_dest = ed.page1.ia.stories | selectattr('headline') | list | length %}
+
+<div class="sheet box-border flex flex-col gap-0 p-[56px_64px_48px_64px] justify-start items-start">
+  <!-- ============================ MASTHEAD ============================ -->
+  <div class="box-border w-full h-fit shrink-0 flex flex-col gap-0 justify-start items-start">
+    <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[0px_0px_8px_0px] justify-between items-center">
+      <div class="text-[11px]/[normal] box-border text-[#4A4A4A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-left [white-space:nowrap]">
+        EDIÇÃO Nº {{ meta.edicao_num }} · ANO {{ meta.ano_romano }}
+      </div>
+      <div class="text-[11px]/[normal] box-border text-[#4A4A4A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-left [white-space:nowrap]">
+        {{ meta.data_extenso }}
+      </div>
+      <div class="text-[11px]/[normal] box-border text-[#4A4A4A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-left [white-space:nowrap]">
+        {{ meta.local }} · IMPRESSO ÀS {{ meta.hora_impressao }}
+      </div>
+    </div>
+    <div class="box-border w-full h-[1px] shrink-0 bg-[#1F1F1F]"></div>
+    <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[6px] p-[18px_0px_14px_0px] justify-start items-center">
+      <div class="text-[76px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-black tracking-[-1px] text-left [white-space:nowrap]">
+        {{ meta.titulo }}
+      </div>
+      <div class="text-[15px]/[normal] box-border text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal italic text-center">
+        {{ meta.tagline }}
+      </div>
+    </div>
+    <div class="box-border w-full h-[4px] shrink-0 bg-[#1F1F1F]"></div>
+    <div class="box-border w-full h-[3px] shrink-0"></div>
+    <div class="box-border w-full h-[1px] shrink-0 bg-[#1F1F1F]"></div>
+    <!-- Briefing -->
+    <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[10px_0px] justify-start items-stretch">
+      {% set briefs = [("MUNDO", briefing.mundo), ("BRASIL", briefing.brasil), ("IA", briefing.ia), ("CLIMA", briefing.clima)] %}
+      {% for label, texto in briefs %}
+      <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[2px] {% if loop.first %}p-[0px_16px_0px_0px]{% else %}p-[0px_16px] [border-width:0px_0px_0px_1px] [border-style:solid] [border-color:#D6D6D6] [margin:0px_0px_0px_-0.5px]{% endif %} justify-start items-start">
+        <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-bold tracking-[1.5px] text-left [white-space:nowrap]">{{ label }}</div>
+        <div class="text-[14px]/[18px] box-border w-full text-[#141414] font-[Newsreader,system-ui,sans-serif] font-medium text-left">{{ texto }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="box-border w-full h-[1px] shrink-0 bg-[#1F1F1F]"></div>
+  </div>
+
+  <!-- ============================== BODY ============================== -->
+  <div class="box-border w-full [flex:1_1_0] flex flex-row gap-[28px] p-[22px_0px_0px_0px] justify-start items-start">
+    <!-- ---------- Coluna principal ---------- -->
+    <div class="box-border [flex:1_1_0] h-full flex flex-col gap-[30px] justify-start items-start">
+
+      <!-- Seção Mundo -->
+      <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[14px] justify-start items-start">
+        {{ section_head("Mundo", "INTERNACIONAL · " ~ mundo_dest ~ " DESTAQUES") }}
+        {{ story_block(ed.page1.mundo.lead, 29, 33, 16, 23) }}
+        <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[22px] justify-start items-start">
+          {% for s in ed.page1.mundo.secondary %}
+          <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[18px] justify-start items-start">
+            {{ story_block(s, 19, 22, 14.5, 21) }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Seção Brasil -->
+      <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[14px] justify-start items-start">
+        {{ section_head("Brasil", "NACIONAL · " ~ brasil_dest ~ " DESTAQUES") }}
+        {{ two_col_stories(ed.page1.brasil.stories) }}
+      </div>
+
+      <!-- Seção IA -->
+      <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[14px] justify-start items-start">
+        {{ section_head("Inteligência Artificial", "TECNOLOGIA · " ~ ia_dest ~ " DESTAQUES") }}
+        {{ two_col_stories(ed.page1.ia.stories) }}
+      </div>
+
+      <!-- Números do dia -->
+      <div class="box-border w-full h-fit shrink-0 flex flex-col gap-0 justify-start items-start">
+        <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[0px_0px_6px_0px] justify-between items-end">
+          <div class="text-[22px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-extrabold text-left [white-space:nowrap]">Números do dia</div>
+          <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-left [white-space:nowrap]">FECHAMENTO DE ONTEM · {{ meta.data_ontem }}</div>
+        </div>
+        <div class="box-border w-full h-[2px] shrink-0 bg-[#1F1F1F]"></div>
+        <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[14px_0px_0px_0px] justify-start items-start">
+          {% for n in numeros %}
+          <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[3px] {% if loop.first %}p-[0px_12px_0px_0px]{% else %}p-[0px_12px] [border-width:0px_0px_0px_1px] [border-style:solid] [border-color:#D6D6D6] [margin:0px_0px_0px_-0.5px]{% endif %} justify-start items-start">
+            <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-bold tracking-[1.5px] text-left [white-space:nowrap]">{{ n.label }}</div>
+            <div class="text-[21px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-bold text-left [white-space:nowrap]">{{ n.valor }}</div>
+            <div class="box-border w-fit h-fit shrink-0 flex flex-row gap-[4px] justify-start items-center">
+              {{ ic.trend(n.trend, 13, "#4A4A4A") }}
+              <div class="text-[11px]/[normal] box-border text-[#4A4A4A] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]">{{ n.delta }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- Barra lateral ---------- -->
+    <div class="box-border w-[351.5px] shrink-0 h-full flex flex-col gap-[18px] p-[0px_0px_0px_24px] justify-start items-start [border-width:0px_0px_0px_1px] [border-style:solid] [border-color:#D6D6D6] [margin:0px_0px_0px_-0.5px]">
+
+      <!-- Clima -->
+      <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[14px] justify-start items-start">
+        {{ side_head("Tempo em " ~ clima_cidade, meta.data_curta) }}
+        <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[14px] justify-start items-center">
+          {{ ic.weather(weather.icon, 64, "#141414", 1.6) }}
+          <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[2px] justify-start items-start">
+            <div class="box-border w-fit h-fit shrink-0 flex flex-row gap-[4px] justify-start items-start">
+              <div class="text-[56px]/[56px] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-bold text-left [white-space:nowrap]">{{ weather.temp_atual }}</div>
+              <div class="text-[12px]/[16px] box-border text-[#4A4A4A] font-[Inter,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]">máxima {{ weather.maxima }}<br />mínima {{ weather.minima }}</div>
+            </div>
+            <div class="text-[15px]/[normal] box-border text-[#141414] font-[Newsreader,system-ui,sans-serif] font-medium text-left">{{ weather.condicao }}</div>
+            <div class="text-[11px]/[15px] box-border w-full text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-normal text-left">{{ weather.linha_sensacao }}</div>
+          </div>
+        </div>
+        {% if weather.horaria %}
+        <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[12px_4px] justify-between items-start [border-width:1px_0px_1px_0px] [border-style:solid] [border-color:#D6D6D6]">
+          {% for h in weather.horaria %}
+          <div class="box-border w-fit shrink-0 h-fit flex flex-col gap-[6px] justify-start items-center">
+            <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[0.5px] text-left [white-space:nowrap]">{{ h.hora }}</div>
+            {{ ic.weather(h.icon, 22, "#141414", 2) }}
+            <div class="text-[14px]/[normal] box-border text-[#141414] font-[Newsreader,system-ui,sans-serif] font-semibold text-left [white-space:nowrap]">{{ h.temp }}</div>
+            <div class="text-[10px]/[normal] box-border text-[#4A4A4A] font-[Inter,system-ui,sans-serif] font-normal text-left [white-space:nowrap]">{{ h.chuva }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[8px] justify-start items-start">
+          {% set extras = [("Nascer / pôr do sol", weather.nascer_por_sol), ("Índice UV", weather.indice_uv), ("Mar", weather.mar), ("Próximos dias", weather.semana)] %}
+          {% for chave, valor in extras %}{% if valor %}
+          <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[10px] justify-between items-center">
+            <div class="text-[11px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[0.5px] text-left [white-space:nowrap]">{{ chave }}</div>
+            <div class="text-[12px]/[normal] box-border text-[#141414] font-[Newsreader,system-ui,sans-serif] font-medium text-right">{{ valor }}</div>
+          </div>
+          {% endif %}{% endfor %}
+        </div>
+      </div>
+
+      <!-- Agenda -->
+      {% if agenda %}
+      <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[14px] justify-start items-start">
+        {{ side_head("Agenda do dia", (agenda | length) ~ " COMPROMISSOS") }}
+        <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[12px] justify-start items-start">
+          {% for c in agenda %}
+          <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[12px] justify-start items-start">
+            <div class="text-[13px]/[normal] box-border w-[42px] shrink-0 text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-bold text-left [white-space:nowrap]">{{ c.hora }}</div>
+            <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[1px] justify-start items-start">
+              <div class="text-[14px]/[18px] box-border w-full text-[#141414] font-[Newsreader,system-ui,sans-serif] font-semibold text-left">{{ c.titulo }}</div>
+              {% if c.detalhe %}<div class="text-[12px]/[15px] box-border w-full text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-normal text-left">{{ c.detalhe }}</div>{% endif %}
+            </div>
+            {% if c.tipo %}<div class="text-[9px]/[normal] box-border shrink-0 text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-bold tracking-[1px] text-right [white-space:nowrap]">{{ c.tipo }}</div>{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        {% if lembretes %}
+        <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[7px] p-[10px_0px_0px_0px] justify-start items-start [border-width:1px_0px_0px_0px] [border-style:solid] [border-color:#D6D6D6]">
+          <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-bold tracking-[1.5px] text-left [white-space:nowrap]">LEMBRETES</div>
+          {% for l in lembretes %}
+          <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[8px] justify-start items-center">
+            <div class="box-border w-[12px] h-[12px] shrink-0 [border-width:1.5px] [border-style:solid] [border-color:#1F1F1F]"></div>
+            <div class="text-[13px]/[17px] box-border [flex:1_1_0] text-[#141414] font-[Newsreader,system-ui,sans-serif] font-normal text-left">{{ l }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Leitura -->
+      {% if ed.reading.title %}
+      <div class="box-border w-full [flex:1_1_0] flex flex-col gap-[10px] justify-start items-start">
+        {{ side_head("Para ler com o café") }}
+        <div class="text-[19px]/[24px] box-border w-full text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-bold text-left">{{ ed.reading.title }}</div>
+        <div class="text-[14px]/[20px] box-border w-full text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal text-left">{{ ed.reading.body }}</div>
+        <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1px] text-left">{{ ed.reading.minutes }} MIN DE LEITURA{% if ed.reading.source %} · {{ ed.reading.source }}{% endif %}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ============================= FOOTER ============================= -->
+  <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[10px_0px_0px_0px] justify-between items-center [border-width:1px_0px_0px_0px] [border-style:solid] [border-color:#1F1F1F]">
+    <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1px] text-left [white-space:nowrap]">{{ meta.titulo | upper }} · GERADO AUTOMATICAMENTE ÀS {{ meta.hora_impressao }} · FONTES EM CADA MATÉRIA</div>
+    <div class="text-[12px]/[normal] box-border text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal italic text-left [white-space:nowrap]">Página 1 de 2</div>
+  </div>
+</div>

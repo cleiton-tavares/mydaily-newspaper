@@ -1,0 +1,141 @@
+# =========================================================================
+#  O Matinal — configuração do jornal
+#  Copie para `config.yaml` e ajuste ao seu gosto.
+#  Segredos (chaves de API) ficam no .env, não aqui.
+# =========================================================================
+
+jornal:
+  titulo: "O Matinal"
+  tagline: "Resumo diário do mundo, do Brasil e da inteligência artificial, pronto antes de você acordar"
+  local: "MACEIÓ · ALAGOAS"
+  fuso: "America/Maceio"
+  # A edição nº é calculada como (dias desde edicao_inicio) + edicao_offset.
+  edicao_inicio: "2026-01-01"
+  edicao_offset: 1
+  ano_romano: "I"
+  # Horário impresso no cabeçalho (apenas texto exibido).
+  hora_impressao: "05:30"
+
+# Modelo de linguagem (via LiteLLM). As credenciais vêm do .env;
+# aqui dá para sobrescrever o modelo e ajustar parâmetros de geração.
+llm:
+  # modelo: gpt-4o        # descomente para forçar; senão usa LITELLM_MODEL do .env
+  temperatura: 0.5
+  # Máximo de itens de RSS enviados por categoria para o modelo curar.
+  max_itens_por_categoria: 14
+
+# Clima real via Open-Meteo (gratuito, sem chave de API).
+clima:
+  cidade: "Maceió"
+  latitude: -9.66625
+  longitude: -35.73508
+  fuso: "America/Maceio"
+
+# Feeds RSS por categoria. Pode adicionar/remover à vontade.
+# O modelo recebe os itens recentes e decide o que entra em cada seção.
+feeds:
+  mundo:
+    - nome: "BBC News Brasil"
+      url: "https://feeds.bbci.co.uk/portuguese/rss.xml"
+    - nome: "G1 Mundo"
+      url: "https://g1.globo.com/rss/g1/mundo/"
+    - nome: "Google Notícias — Mundo"
+      url: "https://news.google.com/rss/headlines/section/topic/WORLD?hl=pt-BR&gl=BR&ceid=BR:pt-419"
+  brasil:
+    - nome: "G1"
+      url: "https://g1.globo.com/rss/g1/"
+    - nome: "Agência Brasil"
+      url: "https://agenciabrasil.ebc.com.br/rss/geral/feed.xml"
+    - nome: "Google Notícias — Brasil"
+      url: "https://news.google.com/rss/headlines/section/topic/NATION?hl=pt-BR&gl=BR&ceid=BR:pt-419"
+    - nome: "Google Notícias — Economia"
+      url: "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=pt-BR&gl=BR&ceid=BR:pt-419"
+  ia:
+    - nome: "The Verge"
+      url: "https://www.theverge.com/rss/index.xml"
+    - nome: "MIT Technology Review"
+      url: "https://www.technologyreview.com/feed/"
+    - nome: "Google Notícias — Inteligência Artificial"
+      url: "https://news.google.com/rss/search?q=intelig%C3%AAncia+artificial+OR+%22IA%22+OR+%22AI%22+when:2d&hl=pt-BR&gl=BR&ceid=BR:pt-419"
+
+# Quantos itens recentes buscar por feed (antes de cortar por categoria).
+feeds_limite_por_fonte: 12
+# Só considera itens publicados nas últimas N horas (0 = sem limite).
+feeds_janela_horas: 36
+
+# "Números do dia" — cada item busca um valor real; se a fonte falhar,
+# usa o campo `fallback` para o jornal nunca sair quebrado.
+# Provedores: awesomeapi | bcb_sgs | yahoo | static
+numeros:
+  - label: "DÓLAR"
+    provider: awesomeapi
+    code: "USD-BRL"
+    formato: "brl"           # R$ 5,12
+    fallback: "R$ 5,12"
+  - label: "IBOVESPA"
+    provider: yahoo
+    symbol: "^BVSP"
+    formato: "inteiro"       # 141.208
+    fallback: "141.208"
+  - label: "SELIC"
+    provider: bcb_sgs
+    series: 432              # meta Selic definida pelo Copom (% a.a.)
+    formato: "percent"       # 12,25%
+    sufixo: ""
+    fallback: "12,25%"
+  - label: "BITCOIN"
+    provider: awesomeapi
+    code: "BTC-USD"
+    formato: "usd_compacto"  # US$ 118,4k
+    fallback: "US$ 118,4k"
+  - label: "IPCA 12 MESES"
+    provider: bcb_sgs
+    series: 13522            # IPCA acumulado em 12 meses (%)
+    formato: "percent"
+    sem_delta: true          # mostra "—" no delta
+    fallback: "4,1%"
+
+# Agenda do dia (barra lateral). Edite conforme sua rotina.
+agenda:
+  - hora: "07:30"
+    titulo: "Corrida na orla"
+    detalhe: "8 km · leve"
+    tipo: "PESSOAL"
+  - hora: "09:00"
+    titulo: "Daily do time"
+    detalhe: "Google Meet · 20 min"
+    tipo: "TRABALHO"
+  - hora: "11:00"
+    titulo: "Revisão de arquitetura"
+    detalhe: "Sala 2 · com o time de dados"
+    tipo: "TRABALHO"
+  - hora: "14:30"
+    titulo: "Dentista"
+    detalhe: "Dr. Andrade · Ponta Verde"
+    tipo: "PESSOAL"
+  - hora: "19:00"
+    titulo: "Jantar com a família"
+    detalhe: "Restaurante do porto"
+    tipo: "PESSOAL"
+
+# Lembretes (checklist na barra lateral).
+lembretes:
+  - "Pagar a fatura do cartão"
+  - "Responder e-mail do fornecedor"
+  - "Comprar presente de aniversário"
+
+# Impressão.
+impressao:
+  # Nome exato da impressora. Vazio = impressora padrão do sistema.
+  impressora: ""
+  # (Windows) Caminho do SumatraPDF para impressão silenciosa.
+  # Se vazio, o app procura nos locais comuns e, por fim, usa o
+  # visualizador de PDF padrão via PowerShell (pode abrir uma janela).
+  sumatra_path: ""
+  # Quantas cópias imprimir.
+  copias: 1
+
+# Saída.
+saida:
+  # Pasta onde o HTML e o PDF são gravados.
+  diretorio: "output"

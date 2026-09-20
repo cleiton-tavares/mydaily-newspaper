@@ -1,0 +1,11 @@
+# Núcleo
+openai>=1.30.0          # cliente OpenAI-compatível usado para falar com o proxy LiteLLM
+feedparser>=6.0.10      # leitura de feeds RSS/Atom
+requests>=2.31.0        # chamadas HTTP (clima, mercados)
+Jinja2>=3.1.0           # renderização dos templates HTML
+PyYAML>=6.0             # leitura do config.yaml
+python-dotenv>=1.0.0    # leitura do .env
+playwright>=1.40.0      # navegador headless para gerar o PDF a partir do HTML
+
+# Depois de instalar as dependências, rode uma vez:
+#   playwright install chromium
