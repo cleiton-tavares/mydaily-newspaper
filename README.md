@@ -151,27 +151,19 @@ Register-ScheduledTask -TaskName "O Matinal" -Action $acao -Trigger $gatilho -De
 ## Puxar a agenda do Google Calendar
 
 Por padrão a agenda vem da lista `agenda:` no `config.yaml`. Para puxar os
-compromissos reais do dia do Google Calendar, instale as dependências extras e
-escolha um dos dois métodos:
-
-```bash
-pip install -r requirements-google.txt
-```
-
-Nos dois casos, no `config.yaml` ative:
-
-```yaml
-google_calendar:
-  ativar: true
-  metodo: "ics"   # ou "api"
-```
-
-Se a consulta falhar (sem internet, credencial errada), o app volta
-automaticamente para a lista `agenda:` do config — o jornal nunca sai sem agenda.
+compromissos reais do dia do Google Calendar, escolha um dos dois métodos abaixo
+(cada um instala só o que precisa). Se a consulta falhar (sem internet, URL
+errada), o app volta automaticamente para a lista `agenda:` do config — o jornal
+nunca sai sem agenda.
 
 ### Método 1 — ICS (mais simples, recomendado)
 
-Usa o "endereço secreto" do seu calendário. Sem Google Cloud, sem OAuth.
+Usa o "endereço secreto" do seu calendário. Sem Google Cloud, sem OAuth. Precisa
+só de duas bibliotecas leves:
+
+```bash
+pip install icalendar recurring_ical_events
+```
 
 1. Abra o [Google Calendar](https://calendar.google.com) no computador.
 2. Passe o mouse sobre o calendário desejado (coluna esquerda) → ⋮ →
@@ -183,7 +175,16 @@ Usa o "endereço secreto" do seu calendário. Sem Google Cloud, sem OAuth.
    GOOGLE_ICS_URL=https://calendar.google.com/calendar/ical/.../basic.ics
    ```
 
-Pronto. Eventos recorrentes e de dia inteiro são tratados automaticamente.
+5. No `config.yaml`, ative:
+
+   ```yaml
+   google_calendar:
+     ativar: true
+     metodo: "ics"
+   ```
+
+Pronto. Eventos recorrentes e de dia inteiro são tratados automaticamente. Teste
+com `python -m mydaily --no-print -v` e confira a linha `Agenda: Google Calendar`.
 
 > Dica: se preferir, dá para colar a URL em `google_calendar.ics_url` no
 > `config.yaml`, mas o `.env` é o lugar mais seguro para segredos.
@@ -191,6 +192,11 @@ Pronto. Eventos recorrentes e de dia inteiro são tratados automaticamente.
 ### Método 2 — API oficial (OAuth)
 
 Mais robusto (não depende de URL secreta), mas exige um projeto no Google Cloud.
+Instale as dependências da API:
+
+```bash
+pip install -r requirements-google.txt
+```
 
 1. No [Google Cloud Console](https://console.cloud.google.com/): crie um projeto
    e **ative a Google Calendar API**.
