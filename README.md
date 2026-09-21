@@ -1,13 +1,18 @@
 # O Matinal — jornal matinal automático
 
-Monta, todas as manhãs, um jornal de **duas páginas A4** com as principais
-notícias do **mundo**, do **Brasil** e de **inteligência artificial**, além de
-**clima**, **indicadores do dia**, **agenda** e **lembretes**. O conteúdo é
-coletado da internet (feeds RSS + APIs públicas), escrito por uma **LLM através
-do seu proxy LiteLLM**, renderizado no layout do jornal e **enviado para a sua
-impressora**.
+Monta, todas as manhãs, um jornal de **até três páginas A4**:
 
-![layout](https://img.shields.io/badge/formato-A4%20·%202%20p%C3%A1ginas-111)
+- **Página 1** — capa: mundo, Brasil, IA, **clima**, **indicadores do dia**,
+  **agenda** e **lembretes**.
+- **Página 2** — reportagens longas de mundo, Brasil e IA + "em poucas linhas".
+- **Página 3** (opcional) — cadernos de **E-sports** e **Cultura**,
+  **quadrinho do dia** e **lançamentos da semana** (jogos, cinema, música, livros).
+
+O conteúdo é coletado da internet (feeds RSS + APIs públicas), escrito por uma
+**LLM através do seu proxy LiteLLM**, renderizado no layout do jornal e
+**enviado para a sua impressora**.
+
+![layout](https://img.shields.io/badge/formato-A4%20·%20at%C3%A9%203%20p%C3%A1ginas-111)
 
 ---
 
@@ -217,6 +222,42 @@ pip install -r requirements-google.txt
 
 ---
 
+## Página 3 — cadernos (E-sports, Cultura, Quadrinhos, Lançamentos)
+
+A terceira página é opcional. No `config.yaml`:
+
+```yaml
+cadernos:
+  ativar: true      # false = jornal de 2 páginas
+```
+
+- **E-sports** e **Cultura** são escritos pela LLM a partir de feeds RSS próprios
+  (categorias `esports` e `cultura`, editáveis em `feeds:`), com tabelas de
+  resultados/jogos e a agenda "O que fazer hoje em Maceió".
+- **Lançamentos da semana** são quatro resenhas curtas (jogo, cinema, música,
+  livro) com nota em estrelas, curadas pela LLM.
+- **Quadrinho do dia** é buscado da fonte do autor:
+
+```yaml
+quadrinhos:
+  ativar: true
+  feed_url: "https://www.willtirando.com.br/feed/"
+  site_url: "https://www.willtirando.com.br/"
+  autor: "Will Tirando"
+```
+
+> **Sobre o quadrinho:** o app baixa a tira **publicada pelo autor** e a embute
+> no seu jornal, sempre creditando a fonte — ele não redesenha nem altera a arte.
+> Use para leitura **pessoal** e respeite o direito autoral do autor; para
+> distribuir o jornal, peça autorização. Se o download falhar, a página 3 sai
+> sem a tira. Para trocar de quadrinho, aponte `feed_url`/`site_url` para outra
+> fonte (qualquer site WordPress com RSS costuma funcionar).
+
+Como E-sports/Cultura/Lançamentos e a agenda local dependem de feeds e do texto
+da LLM, revise-os de vez em quando: são as seções mais "editoriais" do jornal.
+
+---
+
 ## Estrutura do projeto
 
 ```
@@ -233,11 +274,13 @@ mydaily/
 │   ├── rss.py             # coleta de notícias
 │   ├── weather.py         # clima (Open-Meteo)
 │   ├── markets.py         # indicadores (AwesomeAPI, BCB, Yahoo)
-│   └── calendar_google.py # agenda do Google Calendar (ICS ou API)
+│   ├── calendar_google.py # agenda do Google Calendar (ICS ou API)
+│   └── comic.py           # tira do dia (página 3)
 └── templates/
-    ├── newspaper.html.j2   # documento (as duas folhas)
+    ├── newspaper.html.j2   # documento (as três folhas)
     ├── page1.html.j2       # capa
     ├── page2.html.j2       # reportagens
+    ├── page3.html.j2       # cadernos (e-sports, cultura, quadrinhos, lançamentos)
     └── icons.html.j2       # ícones SVG
 ```
 

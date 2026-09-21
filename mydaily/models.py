@@ -55,6 +55,19 @@ class Weather:
 
 
 @dataclass
+class Comic:
+    """A tira de quadrinhos do dia (buscada da fonte do autor)."""
+
+    ok: bool = False
+    image_data_uri: str = ""       # data:image/...;base64,...
+    titulo: str = ""
+    autor: str = ""
+    fonte: str = ""                # domínio da fonte (crédito)
+    data: str = ""                 # data formatada da publicação
+    link: str = ""
+
+
+@dataclass
 class MarketNumber:
     label: str
     valor: str

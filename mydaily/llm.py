@@ -109,6 +109,48 @@ Formato EXATO do JSON de resposta:
 }
 """
 
+# Bloco extra da página 3 (cadernos), acrescentado só quando ativado.
+SCHEMA_HINT_P3 = """\
+Inclua TAMBÉM a chave "page3" no mesmo objeto JSON, baseada nas categorias
+ESPORTS e CULTURA do material (e no seu conhecimento geral para os lançamentos):
+
+"page3": {
+  "esports": {
+    "kicker": "CBLOL · VALORANT · COUNTER-STRIKE",
+    "headline": "manchete da reportagem principal de e-sports",
+    "standfirst": "linha fina em itálico",
+    "paragraphs": ["parágrafo 1", "parágrafo 2", "parágrafo 3", "parágrafo 4"],
+    "results": [
+      {"modalidade": "CBLOL", "confronto": "TIME A 3 × 2 TIME B", "fase": "semifinal"}
+    ],
+    "games": [
+      {"hora": "13h", "confronto": "TIME A × TIME B", "modalidade": "Valorant"}
+    ]
+  },
+  "cultura": {
+    "kicker": "MACEIÓ E ALAGOAS",
+    "headline": "manchete da reportagem principal de cultura",
+    "standfirst": "linha fina em itálico",
+    "paragraphs": ["parágrafo 1", "parágrafo 2", "parágrafo 3", "parágrafo 4"],
+    "agenda": [
+      {"hora": "10h", "titulo": "evento", "detalhe": "local · preço"}
+    ]
+  },
+  "releases": [
+    {"label": "JOGO",   "title": "título", "body": "2 frases de resenha", "stars": 5},
+    {"label": "CINEMA", "title": "título", "body": "2 frases de resenha", "stars": 4},
+    {"label": "MÚSICA", "title": "título", "body": "2 frases de resenha", "stars": 4},
+    {"label": "LIVRO",  "title": "título", "body": "2 frases de resenha", "stars": 3}
+  ]
+}
+
+Regras da page3: "results" tem até 3 itens (resultados de ontem) e "games" até 3
+(jogos de hoje). "agenda" tem 4 eventos culturais do dia (com local e preço no
+"detalhe"). "stars" é um inteiro de 0 a 5. Baseie e-sports e cultura no material;
+para os lançamentos da semana, use títulos reais e conhecidos, sem inventar datas
+ou fatos específicos que não tenha certeza.
+"""
+
 
 def _itens_para_texto(noticias: dict[str, list[NewsItem]], limite: int) -> str:
     blocos: list[str] = []
@@ -147,11 +189,17 @@ def _extrair_json(texto: str) -> dict[str, Any]:
         raise
 
 
-def gerar_editorial(cfg: Config, noticias: dict[str, list[NewsItem]], data_str: str) -> dict[str, Any]:
+def gerar_editorial(
+    cfg: Config,
+    noticias: dict[str, list[NewsItem]],
+    data_str: str,
+    incluir_p3: bool = False,
+) -> dict[str, Any]:
     """Chama a LLM e devolve o dicionário editorial normalizado."""
     client = _client(cfg)
     material = _itens_para_texto(noticias, cfg.llm.max_itens_por_categoria)
 
+    schema = SCHEMA_HINT + ("\n\n" + SCHEMA_HINT_P3 if incluir_p3 else "")
     user_prompt = (
         f"Data de hoje: {data_str}.\n"
         f"Local do jornal: {cfg.jornal.get('local', '')}.\n\n"
@@ -159,7 +207,7 @@ def gerar_editorial(cfg: Config, noticias: dict[str, list[NewsItem]], data_str: 
         "categoria. Selecione as mais relevantes e escreva o jornal.\n"
         f"{material}\n\n"
         "Monte agora o jornal seguindo exatamente o formato pedido.\n\n"
-        f"{SCHEMA_HINT}"
+        f"{schema}"
     )
 
     kwargs: dict[str, Any] = {
@@ -224,6 +272,66 @@ def _reportagem(d: Any, n_paragrafos: int) -> dict[str, Any]:
     }
 
 
+def _stars(v: Any) -> int:
+    try:
+        n = int(round(float(v)))
+    except (TypeError, ValueError):
+        n = 0
+    return max(0, min(5, n))
+
+
+def _tabela(lst: Any, campos: tuple[str, ...], limite: int) -> list[dict[str, str]]:
+    lst = lst if isinstance(lst, list) else []
+    out = []
+    for item in lst[:limite]:
+        item = item if isinstance(item, dict) else {}
+        linha = {c: str(item.get(c, "")).strip() for c in campos}
+        if any(linha.values()):
+            out.append(linha)
+    return out
+
+
+def _esports(d: Any) -> dict[str, Any]:
+    d = d if isinstance(d, dict) else {}
+    base = _reportagem(d, 4)
+    base["results"] = _tabela(d.get("results"), ("modalidade", "confronto", "fase"), 3)
+    base["games"] = _tabela(d.get("games"), ("hora", "confronto", "modalidade"), 3)
+    return base
+
+
+def _cultura(d: Any) -> dict[str, Any]:
+    d = d if isinstance(d, dict) else {}
+    base = _reportagem(d, 4)
+    base["agenda"] = _tabela(d.get("agenda"), ("hora", "titulo", "detalhe"), 4)
+    return base
+
+
+def _releases(lst: Any) -> list[dict[str, Any]]:
+    lst = lst if isinstance(lst, list) else []
+    labels = ["JOGO", "CINEMA", "MÚSICA", "LIVRO"]
+    out = []
+    for i in range(4):
+        r = lst[i] if i < len(lst) and isinstance(lst[i], dict) else {}
+        out.append(
+            {
+                "label": str(r.get("label", labels[i])).strip() or labels[i],
+                "title": str(r.get("title", "")).strip(),
+                "body": str(r.get("body", "")).strip(),
+                "stars": _stars(r.get("stars", 0)),
+            }
+        )
+    return out
+
+
+def _page3(d: Any) -> dict[str, Any]:
+    d = d if isinstance(d, dict) else {}
+    return {
+        "esports": _esports(d.get("esports")),
+        "cultura": _cultura(d.get("cultura")),
+        "releases": _releases(d.get("releases")),
+    }
+
+
 def normalizar(d: dict[str, Any]) -> dict[str, Any]:
     d = d if isinstance(d, dict) else {}
     brief = d.get("briefing", {}) if isinstance(d.get("briefing"), dict) else {}
@@ -276,4 +384,5 @@ def normalizar(d: dict[str, Any]) -> dict[str, Any]:
             "source": str(reading.get("source", "")).strip(),
             "minutes": reading.get("minutes", 6),
         },
+        "page3": _page3(d.get("page3")),
     }

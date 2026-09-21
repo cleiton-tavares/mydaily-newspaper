@@ -8,7 +8,7 @@ from typing import Any
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .config import Config
-from .models import MarketNumber, Weather
+from .models import Comic, MarketNumber, Weather
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 
@@ -24,7 +24,7 @@ _MESES = [
 _MESES_CURTO = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
 
 
-def construir_meta(cfg: Config, hoje: date) -> dict[str, Any]:
+def construir_meta(cfg: Config, hoje: date, total_paginas: int = 2) -> dict[str, Any]:
     wd = hoje.weekday()
     ontem = hoje - timedelta(days=1)
     return {
@@ -34,6 +34,7 @@ def construir_meta(cfg: Config, hoje: date) -> dict[str, Any]:
         "hora_impressao": cfg.jornal.get("hora_impressao", "05:30"),
         "ano_romano": cfg.jornal.get("ano_romano", "I"),
         "edicao_num": cfg.numero_edicao(hoje),
+        "total_paginas": total_paginas,
         "data_extenso": f"{_DIAS[wd]}, {hoje.day} DE {_MESES[hoje.month - 1]} DE {hoje.year}",
         "data_curta": f"{_DIAS_CURTO[wd]} · {hoje.day} {_MESES_CURTO[hoje.month - 1]}",
         "data_ontem": f"{ontem.day} DE {_MESES[ontem.month - 1]}",
@@ -47,11 +48,14 @@ def montar_contexto(
     numeros: list[MarketNumber],
     hoje: date,
     agenda: list[dict[str, Any]] | None = None,
+    comic: Comic | None = None,
+    incluir_p3: bool = False,
 ) -> dict[str, Any]:
     briefing = dict(editorial.get("briefing", {}))
     briefing["clima"] = weather.resumo_curto if weather and weather.resumo_curto else "—"
+    total_paginas = 3 if incluir_p3 else 2
     return {
-        "meta": construir_meta(cfg, hoje),
+        "meta": construir_meta(cfg, hoje, total_paginas),
         "briefing": briefing,
         "ed": editorial,
         "weather": weather,
@@ -59,6 +63,8 @@ def montar_contexto(
         "agenda": cfg.agenda if agenda is None else agenda,
         "lembretes": cfg.lembretes,
         "clima_cidade": cfg.clima.get("cidade", ""),
+        "comic": comic,
+        "incluir_p3": incluir_p3,
     }
 
 

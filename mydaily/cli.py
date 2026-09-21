@@ -38,7 +38,7 @@ def _hoje(args: argparse.Namespace, cfg: Config) -> date:
     return datetime.now(cfg.tz).date()
 
 
-def _coletar_conteudo(cfg: Config, hoje: date, demo: bool):
+def _coletar_conteudo(cfg: Config, hoje: date, demo: bool, incluir_p3: bool):
     """Devolve (editorial, weather, numeros)."""
     from . import sample
 
@@ -83,8 +83,37 @@ def _coletar_conteudo(cfg: Config, hoje: date, demo: bool):
 
     data_str = construir_meta(cfg, hoje)["data_extenso"]
     log.info("Gerando o conteúdo editorial via LiteLLM (modelo: %s)...", cfg.llm.model)
-    editorial = gerar_editorial(cfg, noticias, data_str)
+    editorial = gerar_editorial(cfg, noticias, data_str, incluir_p3=incluir_p3)
     return editorial, weather, numeros
+
+
+def _resolver_comic(cfg: Config, incluir_p3: bool, demo: bool):
+    """Busca a tira do dia (página 3). Devolve Comic ou None."""
+    if not incluir_p3:
+        return None
+    if demo:
+        from . import sample
+
+        return sample.comic_exemplo()
+    q = cfg.raw.get("quadrinhos", {}) or {}
+    if not q.get("ativar"):
+        return None
+    try:
+        from .sources import comic as comic_src
+
+        c = comic_src.obter_quadrinho(
+            feed_url=q.get("feed_url", ""),
+            site_url=q.get("site_url", ""),
+            autor=q.get("autor", ""),
+        )
+        if c.ok:
+            print(f"  Quadrinho: {c.fonte}")
+        else:
+            print("  Quadrinho: indisponível (a página 3 sai sem a tira).")
+        return c
+    except Exception as exc:  # noqa: BLE001
+        log.warning("Falha ao buscar o quadrinho: %s", exc)
+        return None
 
 
 def _resolver_agenda(cfg: Config, hoje: date, demo: bool) -> list[dict]:
@@ -130,10 +159,16 @@ def run(argv: list[str] | None = None) -> int:
     hoje = _hoje(args, cfg)
     print(f"O Matinal — edição de {hoje.isoformat()}")
 
-    editorial, weather, numeros = _coletar_conteudo(cfg, hoje, args.demo)
-    agenda = _resolver_agenda(cfg, hoje, args.demo)
+    incluir_p3 = bool(cfg.raw.get("cadernos", {}).get("ativar", False))
 
-    contexto = montar_contexto(cfg, editorial, weather, numeros, hoje, agenda=agenda)
+    editorial, weather, numeros = _coletar_conteudo(cfg, hoje, args.demo, incluir_p3)
+    agenda = _resolver_agenda(cfg, hoje, args.demo)
+    comic = _resolver_comic(cfg, incluir_p3, args.demo)
+
+    contexto = montar_contexto(
+        cfg, editorial, weather, numeros, hoje,
+        agenda=agenda, comic=comic, incluir_p3=incluir_p3,
+    )
     html = renderizar_html(contexto)
 
     out_dir = cfg.output_dir

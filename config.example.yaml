@@ -57,11 +57,35 @@ feeds:
       url: "https://www.technologyreview.com/feed/"
     - nome: "Google Notícias — Inteligência Artificial"
       url: "https://news.google.com/rss/search?q=intelig%C3%AAncia+artificial+OR+%22IA%22+OR+%22AI%22+when:2d&hl=pt-BR&gl=BR&ceid=BR:pt-419"
+  # Página 3 — caderno de E-sports
+  esports:
+    - nome: "Google Notícias — E-sports"
+      url: "https://news.google.com/rss/search?q=CBLOL+OR+e-sports+OR+Valorant+OR+%22Counter-Strike%22+OR+LOL+esports+when:2d&hl=pt-BR&gl=BR&ceid=BR:pt-419"
+    - nome: "The Enemy"
+      url: "https://www.theenemy.com.br/arena/feed"
+  # Página 3 — caderno de Cultura (foco Maceió/Alagoas)
+  cultura:
+    - nome: "Google Notícias — Cultura Maceió/AL"
+      url: "https://news.google.com/rss/search?q=cultura+OR+teatro+OR+show+OR+cinema+(Macei%C3%B3+OR+Alagoas)+when:3d&hl=pt-BR&gl=BR&ceid=BR:pt-419"
+    - nome: "Google Notícias — Lançamentos (cinema/música/jogos/livros)"
+      url: "https://news.google.com/rss/search?q=lan%C3%A7amento+(filme+OR+%C3%A1lbum+OR+jogo+OR+livro)+when:5d&hl=pt-BR&gl=BR&ceid=BR:pt-419"
 
 # Quantos itens recentes buscar por feed (antes de cortar por categoria).
 feeds_limite_por_fonte: 12
 # Só considera itens publicados nas últimas N horas (0 = sem limite).
 feeds_janela_horas: 36
+
+# Cadernos (página 3: E-sports, Cultura, Quadrinhos, Lançamentos).
+cadernos:
+  ativar: true      # false = jornal de 2 páginas
+
+# Tira de quadrinhos do dia (página 3). O app baixa a imagem publicada pelo
+# autor e a embute no seu jornal pessoal, creditando a fonte.
+quadrinhos:
+  ativar: true
+  feed_url: "https://www.willtirando.com.br/feed/"
+  site_url: "https://www.willtirando.com.br/"
+  autor: "Will Tirando"
 
 # "Números do dia" — cada item busca um valor real; se a fonte falhar,
 # usa o campo `fallback` para o jornal nunca sair quebrado.

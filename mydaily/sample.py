@@ -1,7 +1,9 @@
 """Dados de exemplo para pré-visualizar o layout sem internet/LLM (modo --demo)."""
 from __future__ import annotations
 
-from .models import HourForecast, MarketNumber, Weather
+import base64
+
+from .models import Comic, HourForecast, MarketNumber, Weather
 
 
 def editorial_exemplo() -> dict:
@@ -143,7 +145,80 @@ def editorial_exemplo() -> dict:
             "source": "ANÁLISE · O MATINAL",
             "minutes": 6,
         },
+        "page3": {
+            "esports": {
+                "kicker": "CBLOL · VALORANT · COUNTER-STRIKE",
+                "headline": "LOUD vira contra a paiN no quinto mapa e vai à final do CBLOL pela sexta vez",
+                "standfirst": "Série durou quatro horas e teve o maior público da temporada: 412 mil espectadores simultâneos. A decisão contra a FURIA será no próximo sábado, em São Paulo.",
+                "paragraphs": [
+                    "SÃO PAULO — Perdendo por 2 a 0 em uma melhor de cinco, a LOUD parecia fora da final. O que veio depois foi a maior virada da história do Campeonato Brasileiro de League of Legends: três mapas seguidos, o último decidido em uma luta no Barão aos 38 minutos.",
+                    "A paiN, que dominou a fase regular, viu a série escapar por detalhes. O técnico admitiu depois que a equipe jogou para não perder a partir do terceiro mapa, e que isso custou o ritmo que tinha construído.",
+                    "A final contra a FURIA, marcada para o próximo sábado às 13h, já tem ingressos esgotados. O vencedor garante vaga no Mundial, em outubro, na Coreia do Sul.",
+                    "Nos outros jogos, o Valorant brasileiro também definiu seus finalistas, e o Counter-Strike terá a FURIA no Major de Budapeste a partir de quinta-feira.",
+                ],
+                "results": [
+                    {"modalidade": "CBLOL", "confronto": "LOUD 3 × 2 paiN", "fase": "semifinal"},
+                    {"modalidade": "VALORANT", "confronto": "MIBR 2 × 0 Keyd", "fase": "semifinal"},
+                    {"modalidade": "CS2", "confronto": "FURIA 2 × 1 Imperial", "fase": "qualificatória"},
+                ],
+                "games": [
+                    {"hora": "13h", "confronto": "Leviatán × Sentinels", "modalidade": "Valorant"},
+                    {"hora": "16h", "confronto": "RED Canids × Fluxo", "modalidade": "CBLOL Academy"},
+                    {"hora": "19h", "confronto": "FURIA × Vitality", "modalidade": "CS2"},
+                ],
+            },
+            "cultura": {
+                "kicker": "MACEIÓ E ALAGOAS",
+                "headline": "Teatro Deodoro reabre depois de dois anos com montagem alagoana de “O Auto da Compadecida”",
+                "standfirst": "Restauração de 28 milhões de reais recuperou o teto pintado de 1910 e trocou toda a parte elétrica. A estreia é hoje à noite, com ingressos a preço popular.",
+                "paragraphs": [
+                    "MACEIÓ — O cheiro de tinta fresca ainda estava no ar quando a diretora subiu ao palco para o último ensaio, na sexta-feira. Atrás dela, o teto restaurado do Teatro Deodoro voltava a ser visto pelo público pela primeira vez desde o fechamento, em 2024.",
+                    "A obra, que atrasou oito meses, refez o sistema elétrico, instalou climatização e recuperou 340 metros quadrados de pintura. O piso original, de peroba, foi mantido.",
+                    "A escolha da peça de estreia não foi ao acaso: é o texto mais montado do Nordeste, com atores de Arapiraca, Penedo e Maceió e trilha executada ao vivo por um trio de forró. A temporada vai até 11 de outubro.",
+                    "Os ingressos custam 20 reais, com meia-entrada para estudantes e moradores do Centro. A bilheteria abre às 14h e também vende pelo site do teatro.",
+                ],
+                "agenda": [
+                    {"hora": "10h", "titulo": "Feira de Artesanato da Pajuçara", "detalhe": "Orla · entrada gratuita"},
+                    {"hora": "16h", "titulo": "Sessão “Ainda Estou Aqui” com debate", "detalhe": "Cine Arte Pajuçara · 12 reais"},
+                    {"hora": "18h", "titulo": "Show de Djavan e convidados", "detalhe": "Praia de Jatiúca · gratuito"},
+                    {"hora": "20h", "titulo": "Estreia de “O Auto da Compadecida”", "detalhe": "Teatro Deodoro · 20 reais"},
+                ],
+            },
+            "releases": [
+                {"label": "JOGO", "title": "Hollow Knight: Silksong", "body": "Sete anos depois, a sequência chega ao PC e consoles na terça-feira. Críticos falam em obra-prima difícil.", "stars": 5},
+                {"label": "CINEMA", "title": "“O Agente Secreto”, de Kleber Mendonça Filho", "body": "Estreia quinta nos cinemas. Wagner Moura vive um professor perseguido no Recife de 1977. Premiado em Cannes.", "stars": 4},
+                {"label": "MÚSICA", "title": "Marina Sena — “Vício Inerente”", "body": "Terceiro álbum da cantora mineira mistura brega, funk e bolero. Turnê passa por Maceió em novembro.", "stars": 4},
+                {"label": "LIVRO", "title": "“A Máquina que Lê”, de Ana Paula Maia", "body": "Romance sobre uma tradutora substituída por um algoritmo. Editora Todavia, 216 páginas.", "stars": 3},
+            ],
+        },
     }
+
+
+def comic_exemplo() -> Comic:
+    """Placeholder original para a prévia (não usa a arte protegida do autor)."""
+    svg = (
+        "<svg xmlns='http://www.w3.org/2000/svg' width='1000' height='360' viewBox='0 0 1000 360'>"
+        "<rect width='1000' height='360' fill='#F4F4F4'/>"
+        "<g fill='none' stroke='#C8C8C8' stroke-width='2'>"
+        "<rect x='16' y='16' width='312' height='328'/>"
+        "<rect x='344' y='16' width='312' height='328'/>"
+        "<rect x='672' y='16' width='312' height='328'/></g>"
+        "<text x='500' y='185' text-anchor='middle' font-family='Inter,Arial,sans-serif' "
+        "font-size='22' fill='#9A9A9A'>Prévia — a tira do dia entra aqui</text>"
+        "<text x='500' y='215' text-anchor='middle' font-family='Inter,Arial,sans-serif' "
+        "font-size='13' fill='#B4B4B4'>(buscada da fonte do autor em tempo de execução)</text>"
+        "</svg>"
+    )
+    b64 = base64.b64encode(svg.encode("utf-8")).decode("ascii")
+    return Comic(
+        ok=True,
+        image_data_uri=f"data:image/svg+xml;base64,{b64}",
+        titulo="Prévia da tira do dia",
+        autor="Will Tirando",
+        fonte="willtirando.com.br",
+        data="",
+        link="https://www.willtirando.com.br/",
+    )
 
 
 def weather_exemplo() -> Weather:

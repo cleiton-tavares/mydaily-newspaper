@@ -1,0 +1,150 @@
+{# ======================= MACROS DE APOIO (página 3) ======================= #}
+{% macro caderno_head(label, kicker) %}
+<div class="box-border w-full h-fit shrink-0 flex flex-col gap-[6px] justify-start items-start">
+  <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[8px] justify-between items-end">
+    <div class="text-[24px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-extrabold text-left [white-space:nowrap]">{{ label }}</div>
+    {% if kicker %}<div class="text-[10px]/[normal] box-border shrink-0 text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-right [white-space:nowrap]">{{ kicker }}</div>{% endif %}
+  </div>
+  <div class="box-border w-full h-[3px] shrink-0 bg-[#1F1F1F]"></div>
+</div>
+{% endmacro %}
+
+{% macro colunas_simples(paragraphs, gap) %}
+<div class="box-border w-full h-fit shrink-0 flex flex-row gap-[{{ gap }}px] justify-start items-start">
+  {% for grupo in paragraphs | slice(2) %}
+  <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[10px] justify-start items-start">
+    {% for p in grupo %}{% if p %}
+    <div class="text-[13.5px]/[20px] box-border w-full text-[#141414] font-[Newsreader,system-ui,sans-serif] font-normal text-left">{{ p }}</div>
+    {% endif %}{% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro tab_titulo(txt) %}
+<div class="text-[10px]/[normal] box-border text-[#141414] font-[Inter,system-ui,sans-serif] font-bold tracking-[1.5px] text-left [white-space:nowrap]">{{ txt }}</div>
+{% endmacro %}
+
+{% macro tab_row(c1, c1w, c2, c3, c3w) %}
+<div class="box-border w-full h-fit shrink-0 flex flex-row gap-[8px] p-[7px_0px] justify-start items-center [border-width:0px_0px_1px_0px] [border-style:solid] [border-color:#D6D6D6]">
+  <div class="text-[10.5px]/[normal] box-border w-[{{ c1w }}px] shrink-0 text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-normal text-left">{{ c1 }}</div>
+  <div class="text-[13px]/[normal] box-border [flex:1_1_0] text-[#141414] font-[Newsreader,system-ui,sans-serif] font-bold text-left">{{ c2 }}</div>
+  <div class="text-[10.5px]/[normal] box-border w-[{{ c3w }}px] shrink-0 text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-normal text-right">{{ c3 }}</div>
+</div>
+{% endmacro %}
+
+<div class="sheet box-border flex flex-col gap-0 p-[56px_64px_48px_64px] justify-start items-start">
+  <!-- ============================ CABEÇALHO ============================ -->
+  <div class="box-border w-full h-fit shrink-0 flex flex-col gap-0 justify-start items-start">
+    <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[0px_0px_8px_0px] justify-between items-center">
+      <div class="text-[22px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-black text-left [white-space:nowrap]">{{ meta.titulo }}</div>
+      <div class="text-[11px]/[normal] box-border text-[#4A4A4A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-left [white-space:nowrap]">{{ meta.data_extenso }}</div>
+      <div class="text-[11px]/[normal] box-border text-[#4A4A4A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-left [white-space:nowrap]">E-SPORTS · CULTURA · QUADRINHOS · PÁGINA 3</div>
+    </div>
+    <div class="box-border w-full h-[4px] shrink-0 bg-[#1F1F1F]"></div>
+    <div class="box-border w-full h-[3px] shrink-0"></div>
+    <div class="box-border w-full h-[1px] shrink-0 bg-[#1F1F1F]"></div>
+  </div>
+
+  <!-- ============================== CORPO ============================== -->
+  <div class="box-border w-full [flex:1_1_0] flex flex-col gap-[32px] p-[22px_0px_0px_0px] justify-start items-start">
+
+    <!-- ---------- Cadernos: E-sports | Cultura ---------- -->
+    <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[32px] justify-start items-start">
+
+      <!-- Caderno E-sports -->
+      <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[16px] justify-start items-start">
+        {{ caderno_head("E-sports", ed.page3.esports.kicker) }}
+        <div class="text-[26px]/[29px] box-border w-full text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-extrabold text-left">{{ ed.page3.esports.headline }}</div>
+        {% if ed.page3.esports.standfirst %}<div class="text-[15px]/[20px] box-border w-full text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal italic text-left">{{ ed.page3.esports.standfirst }}</div>{% endif %}
+        {{ colunas_simples(ed.page3.esports.paragraphs, 20) }}
+        {% if ed.page3.esports.results or ed.page3.esports.games %}
+        <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[12px] p-[14px_0px_0px_0px] justify-start items-start [border-width:1px_0px_0px_0px] [border-style:solid] [border-color:#D6D6D6]">
+          {% if ed.page3.esports.results %}
+          <div class="box-border w-full h-fit shrink-0 flex flex-col gap-0 justify-start items-start">
+            {{ tab_titulo("RESULTADOS DE ONTEM") }}
+            {% for r in ed.page3.esports.results %}{{ tab_row(r.modalidade, 70, r.confronto, r.fase, 82) }}{% endfor %}
+          </div>
+          {% endif %}
+          {% if ed.page3.esports.games %}
+          <div class="box-border w-full h-fit shrink-0 flex flex-col gap-0 justify-start items-start">
+            {{ tab_titulo("JOGOS DE HOJE") }}
+            {% for g in ed.page3.esports.games %}{{ tab_row(g.hora, 34, g.confronto, g.modalidade, 96) }}{% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Caderno Cultura -->
+      <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[16px] justify-start items-start">
+        {{ caderno_head("Cultura", ed.page3.cultura.kicker) }}
+        <div class="text-[26px]/[29px] box-border w-full text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-extrabold text-left">{{ ed.page3.cultura.headline }}</div>
+        {% if ed.page3.cultura.standfirst %}<div class="text-[15px]/[20px] box-border w-full text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal italic text-left">{{ ed.page3.cultura.standfirst }}</div>{% endif %}
+        {{ colunas_simples(ed.page3.cultura.paragraphs, 20) }}
+        {% if ed.page3.cultura.agenda %}
+        <div class="box-border w-full h-fit shrink-0 flex flex-col gap-0 p-[14px_0px_0px_0px] justify-start items-start [border-width:1px_0px_0px_0px] [border-style:solid] [border-color:#D6D6D6]">
+          {{ tab_titulo("O QUE FAZER HOJE EM " ~ (clima_cidade | upper)) }}
+          {% for e in ed.page3.cultura.agenda %}
+          <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[10px] p-[7px_0px] justify-start items-start [border-width:0px_0px_1px_0px] [border-style:solid] [border-color:#D6D6D6]">
+            <div class="text-[14px]/[normal] box-border w-[42px] shrink-0 text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-bold text-left">{{ e.hora }}</div>
+            <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[2px] justify-start items-start">
+              <div class="text-[13.5px]/[17px] box-border w-full text-[#141414] font-[Newsreader,system-ui,sans-serif] font-semibold text-left">{{ e.titulo }}</div>
+              {% if e.detalhe %}<div class="text-[10.5px]/[normal] box-border w-full text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-normal text-left">{{ e.detalhe }}</div>{% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ---------- Quadrinhos ---------- -->
+    <div class="box-border w-full h-[2px] shrink-0 bg-[#1F1F1F]"></div>
+    <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[12px] justify-start items-start">
+      <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[8px] justify-between items-end">
+        <div class="text-[24px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-extrabold text-left [white-space:nowrap]">Quadrinhos</div>
+        <div class="text-[10px]/[normal] box-border shrink-0 text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-right [white-space:nowrap]">
+          {%- if comic and comic.autor %}{{ comic.autor | upper }}{% if comic.fonte %} · {{ comic.fonte | upper }}{% endif %}{% else %}TIRA DO DIA{% endif -%}
+        </div>
+      </div>
+      <div class="box-border w-full h-[420px] shrink-0 flex flex-row justify-center items-center [outline:1.5px_solid_#1F1F1F] [outline-offset:-0.75px] overflow-hidden">
+        {% if comic and comic.ok and comic.image_data_uri %}
+        <img src="{{ comic.image_data_uri }}" alt="Tira de {{ comic.autor }}" class="max-w-full max-h-full object-contain" />
+        {% else %}
+        <div class="text-[12px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1px] text-center">TIRA DO DIA INDISPONÍVEL</div>
+        {% endif %}
+      </div>
+      <div class="text-[12px]/[normal] box-border w-full text-[#8A8A8A] font-[Newsreader,system-ui,sans-serif] font-normal italic text-left">
+        {%- if comic and comic.titulo %}“{{ comic.titulo }}” — {{ comic.autor }}{% if comic.data %} · {{ comic.data }}{% endif %}
+        {%- elif comic and comic.autor %}Tira do dia por {{ comic.autor }}{% if comic.fonte %} · {{ comic.fonte }}{% endif %}
+        {%- else %}Tira do dia.{% endif -%}
+      </div>
+    </div>
+
+    <!-- ---------- Lançamentos da semana ---------- -->
+    <div class="box-border w-full h-[2px] shrink-0 bg-[#1F1F1F]"></div>
+    <div class="box-border w-full h-fit shrink-0 flex flex-col gap-[12px] justify-start items-start">
+      <div class="box-border w-full h-fit shrink-0 flex flex-row gap-[8px] justify-between items-end">
+        <div class="text-[22px]/[normal] box-border text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-extrabold text-left [white-space:nowrap]">Lançamentos da semana</div>
+        <div class="text-[10px]/[normal] box-border shrink-0 text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1.5px] text-right [white-space:nowrap]">JOGOS · CINEMA · MÚSICA · LIVROS</div>
+      </div>
+      <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 justify-start items-stretch">
+        {% for r in ed.page3.releases %}
+        <div class="box-border [flex:1_1_0] h-fit flex flex-col gap-[6px] {% if loop.first %}p-[0px_18px_0px_0px]{% else %}p-[0px_18px] [border-width:0px_0px_0px_1px] [border-style:solid] [border-color:#D6D6D6] [margin:0px_0px_0px_-0.5px]{% endif %} justify-start items-start">
+          <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-bold tracking-[1.5px] text-left [white-space:nowrap]">{{ r.label }}</div>
+          <div class="text-[16px]/[19px] box-border w-full text-[#141414] font-['Playfair_Display',system-ui,sans-serif] font-bold text-left">{{ r.title }}</div>
+          <div class="text-[13px]/[18px] box-border w-full text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal text-left">{{ r.body }}</div>
+          <div class="text-[13px]/[normal] box-border text-[#141414] font-[Inter,system-ui,sans-serif] font-normal tracking-[2px] text-left [white-space:nowrap]">{{ '★' * r.stars }}{{ '☆' * (5 - r.stars) }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================= FOOTER ============================= -->
+  <div class="box-border w-full h-fit shrink-0 flex flex-row gap-0 p-[10px_0px_0px_0px] justify-between items-center [border-width:1px_0px_0px_0px] [border-style:solid] [border-color:#1F1F1F]">
+    <div class="text-[10px]/[normal] box-border text-[#8A8A8A] font-[Inter,system-ui,sans-serif] font-semibold tracking-[1px] text-left [white-space:nowrap]">{{ meta.titulo | upper }} · GERADO AUTOMATICAMENTE ÀS {{ meta.hora_impressao }} · FONTES INDICADAS EM CADA REPORTAGEM</div>
+    <div class="text-[12px]/[normal] box-border text-[#4A4A4A] font-[Newsreader,system-ui,sans-serif] font-normal italic text-left [white-space:nowrap]">Página 3 de {{ meta.total_paginas }}</div>
+  </div>
+</div>
